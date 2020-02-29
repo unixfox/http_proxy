@@ -3,9 +3,7 @@ require "../src/http_proxy"
 host = "::"
 port = 8080
 
-server = HTTP::Proxy::Server.new(host, port, handlers: [
-  HTTP::LogHandler.new,
-])
+server = HTTP::Proxy::Server.new(host, port)
 
 server.bind_tcp(host, port)
 
