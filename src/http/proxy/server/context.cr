@@ -25,12 +25,14 @@ class HTTP::Proxy::Server < HTTP::Server
         end
       else
         uri = URI.parse(@request.resource)
-        if ((uri.host || "").includes?("www.google") || (uri.host || "") === "www.youtube.com")
+        if ((uri.host || "").includes?("www.google") || uri.host === "www.youtube.com")
           client = QUIC::Client.new(uri.host || "www.google.com")
 
           @request.headers.delete("Accept-Encoding")
+          @request.headers.delete("Host")
+          @request.headers.delete("Proxy-Connection")
 
-          response = client.get(uri.path)
+          response = client.get(uri.full_path, headers: @request.headers)
 
           response.headers.delete("Transfer-Encoding")
           response.headers.delete("Content-Encoding")
