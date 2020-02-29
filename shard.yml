@@ -7,6 +7,10 @@ authors:
 
 crystal: 0.30.0
 
+dependencies:
+  lsquic:
+    github: omarroth/lsquic.cr
+
 development_dependencies:
   kemal:
     github: kemalcr/kemal

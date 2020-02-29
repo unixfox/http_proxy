@@ -25,18 +25,34 @@ class HTTP::Proxy::Server < HTTP::Server
         end
       else
         uri = URI.parse(@request.resource)
-        client = HTTP::Client.new(uri)
+        if ((uri.host || "").includes?("www.google") || (uri.host || "") === "www.youtube.com")
+          client = QUIC::Client.new(uri.host || "www.google.com")
 
-        @request.headers.delete("Accept-Encoding")
+          @request.headers.delete("Accept-Encoding")
 
-        response = client.exec(@request)
+          response = client.get(uri.path)
 
-        response.headers.delete("Transfer-Encoding")
-        response.headers.delete("Content-Encoding")
+          response.headers.delete("Transfer-Encoding")
+          response.headers.delete("Content-Encoding")
 
-        @response.headers.merge!(response.headers)
-        @response.status_code = response.status_code
-        @response.puts(response.body)
+          @response.headers.merge!(response.headers)
+          @response.status_code = response.status_code
+          @response.puts(response.body)
+        else
+          uri = URI.parse(@request.resource)
+          client = HTTP::Client.new(uri)
+
+          @request.headers.delete("Accept-Encoding")
+
+          response = client.exec(@request)
+
+          response.headers.delete("Transfer-Encoding")
+          response.headers.delete("Content-Encoding")
+
+          @response.headers.merge!(response.headers)
+          @response.status_code = response.status_code
+          @response.puts(response.body)
+        end
       end
     end
   end
